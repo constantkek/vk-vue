@@ -8,7 +8,9 @@
           :userID="userInfo && userInfo.id"
           :inputText="inputText"
           :token="token"
+          :friends="friends"
           @input-change="inputChange"
+          @user-clicked="userClicked"
         />
         <Loader v-else/>
       </div>
@@ -44,6 +46,7 @@ export default {
     return {
       userInfo: null,
       inputText: '',
+      friends: [],
       users: [{
         name: 'Egor',
         age: 20,
@@ -71,11 +74,16 @@ export default {
     },
     inputChange(value) {
       this.inputText = value
+    },
+    userClicked(user) {
+      this.users
     }
   },
   async mounted() {
     this.token = getToken()
     this.userInfo = await getUserInfo(this.token)
+    this.friends = await getFriends(this.token)
+    console.log('Friends', this.friends)
     console.log('User Information:', this.userInfo);
 
     function getToken() {
@@ -103,6 +111,21 @@ export default {
         url: config.getUserInfo(token),
         dataType: 'JSONP'
       }).then(res => res.response[0])
+    }
+    async function getFriends(token) {
+      return await $.ajax({
+        method: 'GET',
+        url: config.getFriends(token),
+        dataType: 'JSONP'
+      }).then(response => {
+          return response.response.items.map(friend => ({
+            userID: friend.id,
+            name: `${friend.first_name} ${friend.last_name}`,
+            city: friend.city ? friend.city.title : 'NO PERMISSION',
+            sex: friend.sex === 2 ? 'Men' : 'Woman',
+            photo: friend.photo_100
+          }))
+        })
     }
   },
 }

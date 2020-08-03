@@ -20,6 +20,22 @@ module.exports = {
     `q=${q}&` +
     `fields=sex,photo_100,city&` +
     `v=5.122&` +
+    `count=10&` +
+    `access_token=${token}`
+    // return `https://api.vk.com/method/` +
+    // `users.search?` +
+    // `from_list=friends&` +
+    // `q=${q}&` +
+    // `fields=sex,photo_100,city&` +
+    // `v=5.122&` +
+    // `access_token=${token}`
+  },
+  getFriends(token) {
+    return `https://api.vk.com/method/` +
+    `friends.get?` +
+    `order=name&` +
+    `fields=sex,photo_100,city&` +
+    `v=5.122&` +
     `access_token=${token}`
   }
 }
