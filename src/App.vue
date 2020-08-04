@@ -123,7 +123,6 @@ export default {
       this.showPage = true
       const friend = this.usersResult.find(u => u.name === name)
       this.clickedUser = friend
-      console.log('onFriendClick', name)
     },
     onBackClick(value) {
       this.showPage = false

@@ -1,7 +1,4 @@
 <template>
-  <!-- <script type="text/javascript" src="https://vk.com/js/api/openapi.js?168"></script> -->
-
-  <!-- VK Widget -->
   <div id="user-page">
     <a-button id="back" @click="onClick" type="danger" icon="rollback">Back</a-button>
     <section class="flex-container">
@@ -35,11 +32,9 @@ export default {
   methods: {
     onClick(event) {
       this.$emit('click', event)
-      console.log('onClick!!')
     }
   },
   mounted() {
-    console.log(this.user);
     VK.Widgets.Group("vk_groups", { mode: 4, height: "400", width: "500" }, `-${this.user.id}`)
   }
 }

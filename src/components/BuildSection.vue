@@ -38,11 +38,6 @@ export default {
   components: {
     Card
   },
-  data() {
-    return {
-      
-    }
-  },
   methods: {
     getColor(mutualNumber, length) {
       const color = Math.floor(mutualNumber / length * 255)
