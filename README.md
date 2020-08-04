@@ -1,5 +1,8 @@
 # vk-vue
 
+## Application on Github Pages
+[Open](https://constantkek.github.io/vk-vue/).
+
 ## Project setup
 ```
 npm install
