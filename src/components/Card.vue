@@ -1,12 +1,14 @@
 <template>
-  <a-card class="card" v-bind:title="user.name" size="small" style="width: 300px">
-    <!-- avatar -->
-    <div class="card-content">
-      <p>Age: {{ user.age }}</p>
-      <p>Sex: {{ user.sex }}</p>
-      <!-- TODO -->
-      <button v-on:click="$emit('remove', user.name)" class="card-btn">&times;</button>
-    </div>
+  <a-card class="card" hoverable style="width: 80%">
+    <template slot="actions" class="ant-card-actions">
+      <a-icon key="close" type="close" @click="$emit('remove', user.name)"/>
+    </template>
+    <a-card-meta :title="user.name" :description="getDesc(user)">
+      <a-avatar
+        slot="avatar"
+        :src="user.photo"
+      />
+    </a-card-meta>
   </a-card>
 </template>
 
@@ -18,6 +20,11 @@ export default {
       required: true
     }
   },
+  methods: {
+    getDesc(user) {
+      return `Birthday: ${user.bdate}\tSex: ${user.sex}`
+    }
+  }
 }
 </script>
 

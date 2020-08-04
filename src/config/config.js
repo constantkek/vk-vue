@@ -1,4 +1,5 @@
 module.exports = {
+  unknown: '¯\\_(ツ)_/¯',
   oauthUrl(currentUrl) { 
     return ("https://oauth.vk.com/authorize?" +
       "client_id=7553424&" +
@@ -34,7 +35,16 @@ module.exports = {
     return `https://api.vk.com/method/` +
     `friends.get?` +
     `order=name&` +
-    `fields=sex,photo_100,city&` +
+    `fields=sex,photo_100,city,domain,bdate&` +
+    `v=5.122&` +
+    `access_token=${token}`
+  },
+  getFriendsByID(id, token) {
+    return `https://api.vk.com/method/` +
+    `friends.get?` +
+    `user_id=${id}&` +
+    `order=name&` +
+    `fields=sex,photo_100,city,domain,bdate&` +
     `v=5.122&` +
     `access_token=${token}`
   }
