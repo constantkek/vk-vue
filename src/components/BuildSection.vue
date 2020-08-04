@@ -4,13 +4,19 @@
     <div class="card">
       <a-tag 
         v-for="(user, key) of users"
-        :color="getColor(user.counter, length)" 
+        :color="getColor(user.friends.length, length)" 
         :key="key">
           <!-- avatar -->
           <img :src="user.photo" alt="">
           <p>{{ user.name }}</p>
           <p>Birthday: {{ user.bdate }}</p>
           <p>Sex: {{ user.sex }}</p>
+          <a-button 
+            :name="user.name"
+            @click="onClick" 
+            type="primary"
+            icon="export">
+          </a-button>
       </a-tag>
     </div>
   </div>
@@ -38,9 +44,12 @@ export default {
     }
   },
   methods: {
-    getColor(counter, length) {
-      const color = Math.floor(counter / length * 255)
+    getColor(mutualNumber, length) {
+      const color = Math.floor(mutualNumber / length * 255)
       return `rgba(0, ${color}, 0, 1)`
+    },
+    onClick(event) {
+      this.$emit('click', event.target.name)
     }
   }
 }
@@ -54,5 +63,6 @@ export default {
 }
 .ant-tag {
   margin: 1rem !important;
+  padding: 0.5rem !important;
 }
 </style>

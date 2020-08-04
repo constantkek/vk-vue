@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <Header/>
-    <section class="content">
+    <section v-if="!showPage" class="content">
       <div id="search-section">
         <SearchSection 
           v-if="userInfo"
@@ -12,9 +12,9 @@
           @input-change="inputChange"
           @select="onSelect"
           @remove="removeUser"
-          @click="onClick"
+          @click="onBuildClick"
         />
-        <Loader v-else/>
+        <a-spin v-else size="large" />
       </div>
       <div class="vl"></div>
       <div id="build-section">
@@ -24,11 +24,17 @@
             v-if="usersResult.length && usersForBuild.length"
             :users="usersResult"
             :length="usersForBuild.length"
+            @click="onUserClick"
           />
           <a-empty v-else class="empty"/>
         </div>
       </div>
     </section>
+    <UserPage 
+      v-else
+      :user="clickedUser"
+      @click="onBackClick"
+    />
   </div>
 </template>
 
@@ -36,7 +42,7 @@
 import SearchSection from './components/SearchSection'
 import BuildSection from './components/BuildSection'
 import Header from './components/Header'
-import Loader from './components/Loader'
+import UserPage from './components/UserPage'
 import config from './config/config'
 import $ from 'jquery'
 export default {
@@ -44,18 +50,20 @@ export default {
   components: {
     SearchSection,
     BuildSection,
-    Header,
-    Loader
+    UserPage,
+    Header
   },
   data() {
     return {
       userInfo: null,
+      token: null,
       inputText: '',
       friends: [],
       usersForBuild: [],
       usersResult: [],
-      token: null,
-      fetching: false
+      fetching: false,
+      showPage: false,
+      clickedUser: null
     }
   },
   methods: {
@@ -78,7 +86,7 @@ export default {
         this.inputText = ''
       }
     },
-    async onClick() {
+    async onBuildClick() {
       const res = {}
       this.fetching = true
       for (const u of this.usersForBuild) {
@@ -95,26 +103,36 @@ export default {
             domain: f.domain,
             photo: f.photo_100,
           })))
+
         for (const f of friends) {
           const index = f.id
           if (res[index]) {
             res[index].counter++
+            res[index].friends.push(u)
           } else {
             res[index] = {}
-            Object.assign(res[index], f, { counter: 1 })
+            Object.assign(res[index], f, { counter: 1, friends: [] })
+            res[index].friends.push(u)
           }
         }
       }
       this.usersResult = Object.values(res).sort((u1, u2) => u1.name > u2.name ? 1 : -1)
       this.fetching = false
+    },
+    onUserClick(name) {
+      this.showPage = true
+      const friend = this.usersResult.find(u => u.name === name)
+      this.clickedUser = friend
+      console.log('onFriendClick', name)
+    },
+    onBackClick(value) {
+      this.showPage = false
     }
   },
   async mounted() {
     this.token = getToken()
     this.userInfo = await getUserInfo(this.token)
     this.friends = await getFriends(this.token)
-    console.log('Friends', this.friends)
-    console.log('User Information:', this.userInfo);
 
     function getToken() {
       const url = window.location.href
@@ -148,14 +166,14 @@ export default {
         url: config.getFriends(token),
         dataType: 'JSONP'
       }).then(response => {
-          return response.response.items.map(friend => ({
-            id: friend.id,
-            name: `${friend.first_name} ${friend.last_name}`,
-            city: friend.city ? friend.city.title : '¯\\_(ツ)_/¯',
-            sex: friend.sex === 2 ? 'Men' : 'Woman',
-            bdate: friend.bdate || '¯\\_(ツ)_/¯',
-            domain: friend.domain,
-            photo: friend.photo_100,
+          return response.response.items.map(f => ({
+            id: f.id,
+            name: `${f.first_name} ${f.last_name}`,
+            city: f.city ? f.city.title : '¯\\_(ツ)_/¯',
+            sex: f.sex === 2 ? 'Men' : 'Woman',
+            bdate: f.bdate || '¯\\_(ツ)_/¯',
+            domain: f.domain,
+            photo: f.photo_100,
           }))
         })
     }
